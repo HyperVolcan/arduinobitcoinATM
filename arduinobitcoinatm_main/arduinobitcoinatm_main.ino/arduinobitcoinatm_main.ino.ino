@@ -173,22 +173,13 @@ int getNextBitcoin(){
                printBitmap("logo.oba"); 
              }  
              
-               //----------------------------------------------------------
-               // Depends on Exchange Rate 
-               // May be removed during volitile Bitcoin market periods
-               //----------------------------------------------------------
-             
-               ///printer->println("Value .002 BTC");
-
-             
+                         
                //print QR code off the SD card
                printBitmap(filename); 
 
-               printer->println("Official Bitcoin Currency.");
+               printer->println("Bitcoin Currency.");
 
                printer->println("Keep secure.");
-
-               printer->println("OpenBitcoinATM.org");
                
                printer->println(" ");
                printer->println(" ");
