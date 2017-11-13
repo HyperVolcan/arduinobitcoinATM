@@ -196,7 +196,7 @@ int getNextBitcoin(){
                printer->println(" ");
 
 
-          break; //stop looking, bitcoin file found
+          break; //stop looking, bitcoin file found on SD
          }  
           else{
             if (BTCNumber >= MAX_BITCOINS -1){
