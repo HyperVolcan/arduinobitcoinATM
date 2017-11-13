@@ -11,8 +11,8 @@
  byte cLastChar; //for streaming from SD card
  char cHexBuf[3]; //for streaming from SD card
  
- const int DOLLAR_PULSE = 4; //pulses per $20 
- const int FIDDY_PULSE = 10; //pulse per $50 
+ const int TWENTY_PULSE = 4; //pulses per $20 
+ const int FIFTY_PULSE = 10; //pulse per $50 
  const int PULSE_TIMEOUT = 2000; //ms before pulse timeout
  const int MAX_BITCOINS = 10; //max btc per SD card
  const int HEADER_LEN = 25; //maximum size of bitmap header
@@ -104,7 +104,7 @@ void loop(){
     if((millis() - pulseTime) < PULSE_TIMEOUT) 
       return;
  
-    if(pulseCount == DOLLAR_PULSE)
+    if(pulseCount == TWENTY_PULSE)
        getNextBitcoin(); // $20 Detected
     if(pulseCount == FIDDY_PULSE)   
       Serial.println("Fiddy Detected");// Detected $50 note
