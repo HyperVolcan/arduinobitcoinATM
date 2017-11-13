@@ -60,7 +60,7 @@ void setup(){
   
   
   printer = new SoftwareSerial(printer_RX_Pin, printer_TX_Pin);
-  printer->begin(19200);
+  printer->begin(9600);
 
   //Modify the print speed and heat
   PRINTER_WRITE(27);
@@ -106,8 +106,8 @@ void loop(){
  
     if(pulseCount == TWENTY_PULSE)
        getNextBitcoin(); // $20 Detected
-    if(pulseCount == FIFTY_PULSE)   
-      Serial.println("$50 Detected");// Detected $50 note TESTING
+    if(pulseCount == FIFTY_PULSE) // $20 Detected 
+      Serial.println("$50 Detected");// Detected $50
        
      //----------------------------------------------------------
      // Add additional currency denomination logic here: $5, $10, $20      
