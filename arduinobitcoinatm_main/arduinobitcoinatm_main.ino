@@ -60,7 +60,7 @@ void setup(){
   
   
   printer = new SoftwareSerial(printer_RX_Pin, printer_TX_Pin);
-  printer->begin(9600);
+  printer->begin(9600);  //baud rate for printer
 
   //Modify the print speed and heat
   PRINTER_WRITE(27);
