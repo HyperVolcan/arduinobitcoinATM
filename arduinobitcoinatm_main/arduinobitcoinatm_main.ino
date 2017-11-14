@@ -106,8 +106,8 @@ void loop(){
  
     if(pulseCount == TWENTY_PULSE)
        getNextBitcoin(); // $20 Detected
-    if(pulseCount == FIFTY_PULSE) // $20 Detected 
-      Serial.println("$50 Detected");// Detected $50
+    if(pulseCount == FIFTY_PULSE) // $50 Detected 
+      Serial.println("$50 Detected");
        
      //----------------------------------------------------------
      // Add additional currency denomination logic here: $5, $10, $20      
