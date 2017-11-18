@@ -10,8 +10,7 @@
  byte cThisChar; //for streaming from SD card
  byte cLastChar; //for streaming from SD card
  char cHexBuf[3]; //for streaming from SD card
- 
- const int TWENTY_PULSE = 4; //pulses per $20 
+  
  const int FIFTY_PULSE = 10; //pulse per $50 
  const int PULSE_TIMEOUT = 2000; //ms before pulse timeout
  const int MAX_BITCOINS = 10; //max btc per SD card
@@ -26,7 +25,7 @@
  RTC_DS1307 RTC; // define the Real Time Clock object
 
  char LOG_FILE[] = "btclog.txt"; //name of Bitcoin transaction log file
- 
+    
  const int chipSelect = 10; //SD module
  
  int printer_RX_Pin = 5;  // This is the green wire
@@ -52,13 +51,14 @@ void setup(){
   pinMode(2, INPUT); //for Apex bill acceptor pulse detect 
   pinMode(10, OUTPUT); //Slave Select Pin #10 on Uno
   pinMode(3, OUTPUT);
-  
-  if (!SD.begin(chipSelect)) {    
+
+
+    if (!SD.begin(chipSelect)) {    
       Serial.println("card failed or not present");
       return;// error("Card failed, or not present");     
   }
-  
-  
+
+   
   printer = new SoftwareSerial(printer_RX_Pin, printer_TX_Pin);
   printer->begin(9600);  //baud rate for printer
 
@@ -104,10 +104,9 @@ void loop(){
     if((millis() - pulseTime) < PULSE_TIMEOUT) 
       return;
  
-    if(pulseCount == TWENTY_PULSE)
-       getNextBitcoin(); // $20 Detected
-    if(pulseCount == FIFTY_PULSE) // $50 Detected 
-      Serial.println("$50 Detected");
+    if(pulseCount == FIFTY_PULSE)
+       getNextBitcoin(); // $50 Detected
+    
        
      //----------------------------------------------------------
      // Add additional currency denomination logic here: $5, $10, $20      
@@ -121,7 +120,7 @@ void loop(){
 /*****************************************************
 onPulse
 - read 50ms pulses from Apex Bill Acceptor.
-- 4 pulses indicates one dollar accepted
+- 10 pulses indicates $50 accepted
 
 ******************************************************/
 void onPulse(){
@@ -192,7 +191,8 @@ int getNextBitcoin(){
           else{
             if (BTCNumber >= MAX_BITCOINS -1){
               
-                //digitalWrite(3, HIGH); //Stop accepting notes
+                digitalWrite(3, HIGH); //Stop accepting notes
+                Serial.println("Bill Acceptor Disabled"); 
               
             }  
              Serial.print("file does not exist: ");
