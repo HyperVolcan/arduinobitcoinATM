@@ -171,6 +171,7 @@ int getNextBitcoin(){
                //print QR code off the SD card
                printBitmap(filename); 
 
+               //Print Text Under QR Code
                //printer->println("Download Breadwallet for iPhone");
                //printer->println("or Android and scan the");
                //printer->println("QR Code to use your Bitcoins.");
@@ -185,8 +186,7 @@ int getNextBitcoin(){
                printer->println(" ");
 
    #if !TEST_MODE
-  //delete the QR code file after it is printed
-     SD.remove(filename);
+   SD.remove(filename);//delete the QR code file after it is printed
    #endif      
 
                
