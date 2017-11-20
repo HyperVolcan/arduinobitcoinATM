@@ -17,7 +17,7 @@
  const int HEADER_LEN = 25; //maximum size of bitmap header
  
  #define SET_RTCLOCK      1 // Set to true to set Bitcoin transaction log clock to program compile time.
- #define TEST_MODE        1 // Set to true to not delete private keys (prints the same private key for each dollar).
+ #define TEST_MODE        0 // Set to true to not delete private keys (prints the same private key for each dollar).
  
  #define DOUBLE_HEIGHT_MASK (1 << 4) //size of pixels
  #define DOUBLE_WIDTH_MASK  (1 << 5) //size of pixels
@@ -43,14 +43,14 @@
 
  long pulseCount = 0;
  unsigned long pulseTime, lastTime;
- volatile long pulsePerDollar = 4;
+ volatile long pulsePerDollar = 10;
  
 void setup(){
   Serial.begin(57600); //baud rate for serial monitor
   attachInterrupt(0, onPulse, RISING); //interupt for Apex bill acceptor pulse detect
   pinMode(2, INPUT); //for Apex bill acceptor pulse detect 
   pinMode(10, OUTPUT); //Slave Select Pin #10 on Uno
-  pinMode(3, OUTPUT);
+  pinMode(3, OUTPUT); //For Enable & Disable Acceptor
 
 
     if (!SD.begin(chipSelect)) {    
@@ -76,37 +76,35 @@ void setup(){
   int printSetting = (printBreakTime<<5) | printDensity;
   PRINTER_WRITE(printSetting); //Combination of printDensity and printBreakTime
 
-/* For double height text. Disabled to save paper
-  PRINTER_WRITE(27);
-  PRINTER_WRITE(33);
-  PRINTER_WRITE(DOUBLE_HEIGHT_MASK);
-  PRINTER_WRITE(DOUBLE_WIDTH_MASK);
-*/
 
   Serial.println();
   Serial.println("Parameters set");
   
-   #if SET_RTCLOCK
-    // following line sets the RTC to the date & time for Bitcoin Transaction log
-     RTC.adjust(DateTime(__DATE__, __TIME__));
-   #endif
+ #if SET_RTCLOCK
+ RTC.adjust(DateTime(__DATE__, __TIME__));  // Set the RTC to the date & time for Bitcoin Transaction log
+ #endif
+
 
 }
 
-void loop(){
-  
+void loop(){ 
+
+    if(SD.exists("BTC_9.btc")){
+      digitalWrite(3, LOW); //
+     } else {
+     digitalWrite(3, HIGH);//No bitcoins left disable Bill Acceptor
+     }
   
     if(pulseCount == 0) {
-      Serial.println("No Pulses Detected");
-      return;// error("No Pulses Decteced");
+    return;// error("No Pulses Decteced");
     }
  
     if((millis() - pulseTime) < PULSE_TIMEOUT) 
       return;
  
     if(pulseCount == FIFTY_PULSE)
+       Serial.println("$50 Detected");
        getNextBitcoin(); // $50 Detected
-    
        
      //----------------------------------------------------------
      // Add additional currency denomination logic here: $5, $10, $20      
@@ -114,7 +112,8 @@ void loop(){
    
      pulseCount = 0; // reset pulse count
      pulseTime = 0;
-  
+   
+     
 }
 
 /*****************************************************
@@ -134,9 +133,7 @@ if(val == HIGH)
 }
 
 /*****************************************************
-getNextBitcoin
-- Read next bitcoin QR Code from SD Card
-
+- Read next bitcoin QR Code from SD
 ******************************************************/
 
 int getNextBitcoin(){
@@ -144,8 +141,6 @@ int getNextBitcoin(){
   int BTCNumber = 0, i = 0;
  // long counter = 0;
  char cBuf, cPrev;
-  
-
        
     Serial.println("card initialized.");
  
@@ -176,18 +171,28 @@ int getNextBitcoin(){
                //print QR code off the SD card
                printBitmap(filename); 
 
-               printer->println("Bitcoin Currency.");
-
-               printer->println("Keep secure.");
+               //printer->println("Download Breadwallet for iPhone");
+               //printer->println("or Android and scan the");
+               //printer->println("QR Code to use your Bitcoins.");
+               //printer->println("Keep this QR code secure until");
+               //printer->println("you have scanned it into");
+               //printer->println("Breadwallet. For more info visit");
+               //printer->println("www.test.com.au");
                
                printer->println(" ");
                printer->println(" ");
                printer->println(" ");
                printer->println(" ");
 
+   #if !TEST_MODE
+  //delete the QR code file after it is printed
+     SD.remove(filename);
+   #endif      
 
-          break; //stop looking, bitcoin file found on SD
-         }  
+               
+         break; //stop looking, bitcoin file found
+         }                 
+    
           else{
             if (BTCNumber >= MAX_BITCOINS -1){
               
@@ -196,11 +201,14 @@ int getNextBitcoin(){
               
             }  
              Serial.print("file does not exist: ");
-             Serial.println(filename);        
+             Serial.println(filename);
+             
+             
         }
     //increment bitcoin number
     BTCNumber++;
     }
+
 }  
 
 /*****************************************************
@@ -221,7 +229,7 @@ void printBitmap(char *filename){
           if(tempFile.available()) cThisChar = tempFile.read(); 
     
               //read width of bitmap
-              if(cLastChar == '0' && cThisChar == 'w'){
+              if(cLastChar == '0' && cThisChar == 'w'){   
                 if(tempFile.available()) cHexBuf[0] = tempFile.read(); 
                 if(tempFile.available()) cHexBuf[1] = tempFile.read(); 
                   cHexBuf[2] = '\0';
@@ -284,24 +292,19 @@ void printBitmap(char *filename){
   tempFile.close();
     Serial.println("file closed");
 
+     
     
-   #if !TEST_MODE
-  //delete the QR code file after it is printed
-     SD.remove(filename);
-   #endif 
- 
- 
-   // update transaction log file
-    //if (! SD.exists(LOG_FILE)) {
+     // update transaction log file
+   //if (! SD.exists(LOG_FILE)) {
+      //updateLog();
       // only open a new file if it doesn't exist
        
-
+   
     //}
     
   return;
   
 }
-
 
 /*****************************************************
 updateLog()
