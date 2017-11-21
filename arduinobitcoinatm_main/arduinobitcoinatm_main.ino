@@ -47,8 +47,8 @@
  
 void setup(){
   Serial.begin(57600); //baud rate for serial monitor
-  attachInterrupt(0, onPulse, RISING); //interupt for Apex bill acceptor pulse detect
-  pinMode(2, INPUT); //for Apex bill acceptor pulse detect 
+  attachInterrupt(0, onPulse, RISING); // Detects pulse from ICT P70 Bill Acceptor
+  pinMode(2, INPUT); //for ICT P70 bill acceptor pulse detect 
   pinMode(10, OUTPUT); //Slave Select Pin #10 on Uno
   pinMode(3, OUTPUT); //For Enable & Disable Acceptor
 
