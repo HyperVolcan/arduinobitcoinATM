@@ -118,7 +118,7 @@ void loop(){
 
 /*****************************************************
 onPulse
-- read 50ms pulses from Apex Bill Acceptor.
+- read 50ms pulses from Bill Acceptor.
 - 10 pulses indicates $50 accepted
 
 ******************************************************/
