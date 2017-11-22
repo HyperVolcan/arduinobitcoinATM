@@ -94,7 +94,7 @@ void loop(){
     if(SD.exists("BTC_9.btc")){
       digitalWrite(3, LOW); //
      } else {
-     digitalWrite(3, HIGH);//No bitcoins left disable Bill Acceptor
+     digitalWrite(3, HIGH);// No bitcoins left disable Bill Acceptor
      }
   
     if(pulseCount == 0) {
