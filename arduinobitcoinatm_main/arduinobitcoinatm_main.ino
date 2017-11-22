@@ -10,14 +10,16 @@
  byte cThisChar; //for streaming from SD card
  byte cLastChar; //for streaming from SD card
  char cHexBuf[3]; //for streaming from SD card
-  
- const int FIFTY_PULSE = 10; //pulse per $50 
- const int PULSE_TIMEOUT = 2000; //ms before pulse timeout
+
+ const int FIVE_PULSE = 1; // $5 Pulse Count
+ const int TEN_PULSE = 2; // $10 Pulse Count
+ const int FIFTY_PULSE = 10; // $50 Pulse Count
+ const int PULSE_TIMEOUT = 1000; //ms before pulse timeout
  const int MAX_BITCOINS = 10; //max btc per SD card
  const int HEADER_LEN = 25; //maximum size of bitmap header
  
  #define SET_RTCLOCK      1 // Set to true to set Bitcoin transaction log clock to program compile time.
- #define TEST_MODE        0 // Set to true to not delete private keys (prints the same private key for each dollar).
+ #define TEST_MODE        1 // Set to true to not delete private keys (prints the same private key for each dollar).
  
  #define DOUBLE_HEIGHT_MASK (1 << 4) //size of pixels
  #define DOUBLE_WIDTH_MASK  (1 << 5) //size of pixels
@@ -96,24 +98,35 @@ void loop(){
      }
   
     if(pulseCount == 0) {
-    return;// error("No Pulses Decteced");
+    return;
     }
  
     if((millis() - pulseTime) < PULSE_TIMEOUT) 
       return;
  
-    if(pulseCount == FIFTY_PULSE)
+    if(pulseCount == FIVE_PULSE){
+       Serial.println("$5 Detected");
+       getNextBitcoin();
+       pulseCount = 0; // reset pulse count
+       pulseTime = 0;
+    }
+
+    if(pulseCount == TEN_PULSE){
+      Serial.println("$10 Detected");
+      getNextBitcoin();       
+      pulseCount = 0; // reset pulse count
+      pulseTime = 0;
+    }
+    
+    if(pulseCount == FIFTY_PULSE){
        Serial.println("$50 Detected");
-       getNextBitcoin(); // $50 Detected
-       
-     //----------------------------------------------------------
-     // Add additional currency denomination logic here: $5, $10, $20      
-     //----------------------------------------------------------
-   
-     pulseCount = 0; // reset pulse count
-     pulseTime = 0;
-   
-     
+       getNextBitcoin();
+       pulseCount = 0; // reset pulse count
+       pulseTime = 0;
+    }
+    
+    pulseCount = 0; // reset pulse count
+    pulseTime = 0; 
 }
 
 /*****************************************************
@@ -129,6 +142,7 @@ pulseTime = millis();
 
 if(val == HIGH)
   pulseCount++;
+ 
   
 }
 
