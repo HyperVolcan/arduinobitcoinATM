@@ -143,7 +143,7 @@ int getNextBitcoin(){
  char cBuf, cPrev;
        
     Serial.println("card initialized.");
- 
+    digitalWrite(3, HIGH); //Disable Bill Acceptor While Printing
     while(BTCNumber<MAX_BITCOINS){
       
          //prepend file name
